@@ -1,0 +1,6 @@
+database:
+  host: "localhost"
+  db_user: "beu"
+  password: ""
+  dialect: "postgres"
+  db_name: "beu_order"
