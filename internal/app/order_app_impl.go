@@ -3,11 +3,25 @@ package app
 import (
 	grpcService "github.com/beuus39/order/internal/adapters/grpc"
 	"github.com/beuus39/order/internal/domain"
+	"github.com/beuus39/order/internal/repository"
 	"github.com/beuus39/product/pkg/grpc"
 	"github.com/pkg/errors"
 )
 type orderImpl struct {
 	productGrpcService  grpcService.ProductGrpcClient
+	orderRepository repository.Order
+}
+
+func (u *orderImpl) FindOrderById(orderId uint) (order domain.Order, err error) {
+	return u.orderRepository.FindById(orderId)
+}
+
+func (u *orderImpl) FindAllOrders() (orders []domain.Order, err error) {
+	return u.orderRepository.FindAll()
+}
+
+func (u *orderImpl) SaveOrder(order domain.Order) (isSuccess bool) {
+	return u.orderRepository.SaveOrder(order)
 }
 
 //FindProductByID
@@ -65,8 +79,9 @@ func (u *orderImpl) FindProductAll() <-chan grpc.ServiceResult {
 }
 
 //NewOrderUseCase
-func NewOrderImpl(productGrpcService grpcService.ProductGrpcClient) OrderApp {
+func NewOrderImpl(productGrpcService grpcService.ProductGrpcClient, orderRepository repository.Order) OrderApp {
 	return &orderImpl{
-		productGrpcService:    productGrpcService,
+		productGrpcService: productGrpcService,
+		orderRepository: orderRepository,
 	}
 }

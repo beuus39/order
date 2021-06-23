@@ -1,17 +1,8 @@
 package domain
 
-import "github.com/jinzhu/gorm"
-
 type Order struct {
-	gorm.Model
-	OrderStatus int `gorm:"default:0"`
-	TrackingNumber string
-	OrderItems []OrderItem `gorm:"foreignKey:OrderId"`
-
-	AddressId uint
-
-	UserId uint `gorm:"default:null"`
-	OrderItemCount int `gorm:"-"`
+	OrderStatus int `gorm:"column:order_status;default:0"`
+	ID uint `gorm:"column:id;primaryKey;autoIncrement"`
 }
 
 func (order *Order) GetOrderStatusAsString() string  {

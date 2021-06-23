@@ -1,10 +1,12 @@
 package rest
 
 import (
+	encodingJson "encoding/json"
+	"fmt"
 	"github.com/beuus39/order/internal/app"
 	"github.com/beuus39/order/internal/common/json"
 	"github.com/beuus39/order/internal/domain"
-	"fmt"
+	"github.com/beuus39/order/internal/shared/dtos"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -21,6 +23,66 @@ func NewHttpOrderHandler(orderApp app.OrderApp) *HttpOrderHandler {
 	return &HttpOrderHandler{
 		orderApp: orderApp,
 	}
+}
+
+func (h *HttpOrderHandler) FindOrderById() http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.Method != "GET" {
+			json.JsonResponse(res, "Invalid Method", http.StatusMethodNotAllowed)
+			return
+		}
+		paths := mux.Vars(req)
+		orderId, _ := strconv.Atoi(paths["id"])
+		order, err := h.orderApp.FindOrderById(uint(orderId))
+
+		if err != nil {
+			json.JsonResponse(res, "Cannot Get Order", http.StatusInternalServerError)
+			return
+		}
+
+		orderDto := &dtos.FindOrdersResponse{ID: order.ID, OrderStatus: order.OrderStatus}
+		json.JsonResponse(res, orderDto, http.StatusOK)
+	})
+}
+func (h *HttpOrderHandler) FindAllOrders() http.Handler  {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.Method != "GET" {
+			json.JsonResponse(res, "Invalid Method", http.StatusMethodNotAllowed)
+			return
+		}
+
+		orders, err := h.orderApp.FindAllOrders()
+		if err != nil {
+			json.JsonResponse(res, "Cannot Get Orders", http.StatusInternalServerError)
+			return
+		}
+
+		ordersDto := orders
+		json.JsonResponse(res, ordersDto, http.StatusOK)
+	})
+
+}
+func (h *HttpOrderHandler) SaveOrder() http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if req.Method != "POST" {
+			json.JsonResponse(res, "Invalid Method", http.StatusMethodNotAllowed)
+			return
+		}
+
+		var orderDto dtos.CreateOrderDto
+		err := encodingJson.NewDecoder(req.Body).Decode(&orderDto)
+		if err != nil {
+			json.JsonResponse(res, "Could not receive body", http.StatusBadRequest)
+			return
+		}
+
+		order := domain.Order{
+			OrderStatus: orderDto.OrderStatus,
+		}
+
+		isSuccess := h.orderApp.SaveOrder(order)
+		json.JsonResponse(res, isSuccess, http.StatusOK)
+	})
 }
 
 // GetProduct http handler function, for get product by ID
