@@ -12,6 +12,7 @@ type Config struct {
 		Host string     `yaml:"host"`
 		Password string `yaml:"password"`
 		Dialect string  `yaml:"dialect"`
+		Port string     `yaml:"port"`
 	}
 }
 

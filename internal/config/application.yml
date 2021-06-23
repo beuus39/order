@@ -4,3 +4,4 @@ database:
   password: "Beu$2021"
   dialect: "postgres"
   db_name: "orders"
+  port: "5432"

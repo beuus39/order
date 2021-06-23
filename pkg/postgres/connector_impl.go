@@ -14,12 +14,13 @@ type Config struct {
 	Password string
 	DbName string
 	Host string
+	Port string
 }
 
 var DB *gorm.DB
 func (c Config) Connection() *gorm.DB {
-	dbUri := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable ",
-		c.Host, c.Username, c.Password, c.DbName)
+	dbUri := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable ",
+		c.Host, c.Port, c.Username, c.DbName, c.Password)
 	db, err := gorm.Open("postgres", dbUri)
 
 	if err != nil {
@@ -50,5 +51,6 @@ func NewDriver(conf Config) Driver {
 		Password: conf.Password,
 		DbName: conf.DbName,
 		Host: conf.Host,
+		Port: conf.Port,
 	}
 }

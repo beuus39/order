@@ -22,6 +22,7 @@ func main() {
 		Host: conf.Database.Host,
 		DbName: conf.Database.DBName,
 		Password: conf.Database.Password,
+		Port: conf.Database.Port,
 	}
 	connector := postgres.NewDriver(cfg)
 	connector.Connection()
