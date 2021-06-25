@@ -1,37 +1,40 @@
 package config
 
 import (
-	"gopkg.in/yaml.v2"
 	"os"
 )
 
+const (
+	DB_NAME      string = "DB_NAME"
+	DB_HOST      string = "DB_HOST"
+	DB_USRERNAME string = "DB_USRERNAME"
+	DB_PASSWORD  string = "DB_PASSWORD"
+	DB_DIALECT   string = "DB_DIALECT"
+	DB_PORT      string = "DB_PORT"
+)
+
 type Config struct {
-	Database struct{
-		DBName string   `yaml:"db_name"`
-		DBUser string   `yaml:"db_user"`
-		Host string     `yaml:"host"`
-		Password string `yaml:"password"`
-		Dialect string  `yaml:"dialect"`
-		Port string     `yaml:"port"`
-	}
+	DBName   string
+	DBUser   string
+	Host     string
+	Password string
+	Dialect  string
+	Port     string
 }
 
-func NewConfig(configFile string) (*Config, error) {
-	file, err := os.Open(configFile)
-
-	if err != nil {
-		return nil, err
+func LoadEnv() *Config {
+	dbName := os.Getenv(DB_NAME)
+	dbHost := os.Getenv(DB_HOST)
+	dbUsername := os.Getenv(DB_USRERNAME)
+	dbPassword := os.Getenv(DB_PASSWORD)
+	dbPort := os.Getenv(DB_PORT)
+	dbDialect := os.Getenv(DB_DIALECT)
+	return &Config{
+		DBName:   dbName,
+		DBUser:   dbUsername,
+		Host:     dbHost,
+		Password: dbPassword,
+		Dialect:  dbDialect,
+		Port:     dbPort,
 	}
-
-	defer file.Close()
-
-	cfg := &Config{}
-
-	yd := yaml.NewDecoder(file)
-	err = yd.Decode(cfg)
-
-	if err != nil {
-		return nil, err
-	}
-	return cfg, nil
 }

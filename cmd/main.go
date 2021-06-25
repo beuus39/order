@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+
 	grpcService "github.com/beuus39/order/internal/adapters/grpc"
 	"github.com/beuus39/order/internal/app"
 	"github.com/beuus39/order/internal/config"
@@ -10,19 +14,19 @@ import (
 	"github.com/beuus39/order/pkg/postgres"
 	middleware "github.com/beuus39/product/pkg/logs/http"
 	"github.com/gorilla/mux"
-	"log"
-	"net/http"
-	"os"
 )
 
 func main() {
-	conf, _ := config.NewConfig("C:/Users/cong.nguyenthanh4/go/src/BeUUS/order/internal/config/application.yml")
+	conf := config.LoadEnv()
+
+	fmt.Printf("Username = %s Host = %s DbName = %s Password = %s Port = %s",
+		conf.DBUser, conf.Host, conf.DBName, conf.Password, conf.Port)
 	cfg := postgres.Config{
-		Username: conf.Database.DBUser,
-		Host: conf.Database.Host,
-		DbName: conf.Database.DBName,
-		Password: conf.Database.Password,
-		Port: conf.Database.Port,
+		Username: conf.DBUser,
+		Host:     conf.Host,
+		DbName:   conf.DBName,
+		Password: conf.Password,
+		Port:     conf.Port,
 	}
 	connector := postgres.NewDriver(cfg)
 	connector.Connection()
