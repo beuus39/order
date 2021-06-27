@@ -1,0 +1,1 @@
+The directory contain swagger.yml, swagger.json or all definition for integrate to BeU

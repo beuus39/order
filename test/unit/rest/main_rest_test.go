@@ -49,7 +49,7 @@ func TestFindAllOrders(t *testing.T) {
 	mockOrderApp := new(MockOrderApp)
 	mockOrderApp.On("FindAllOrders").Return(mockOrder, nil)
 
-	orderHttpHandler := rest.NewHttpOrderHandler(mockOrderApp)
+	orderHttpHandler := rest.NewHttpOrderHandler(mockOrderApp, nil)
 	r := mux.NewRouter()
 	r.Handle("/api/orders", orderHttpHandler.FindAllOrders())
 
